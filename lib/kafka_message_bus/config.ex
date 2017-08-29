@@ -20,6 +20,10 @@ defmodule KafkaMessageBus.Config do
   defp default_instance_index do
     ~r/^.*-(\d+)$/
     |> Regex.run("#{System.get_env("HOSTNAME")}")
+    |> case do
+      nil -> ["1"]
+      list -> list
+    end
     |> List.last
     |> String.to_integer
   end
