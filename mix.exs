@@ -8,8 +8,24 @@ defmodule KafkaMessageBus.Mixfile do
     build_embedded: Mix.env == :prod,
     start_permanent: Mix.env == :prod,
     deps: deps(),
-    source_url: "https://github.com/jeffhsta/ExKafkaLogger"
+    description: description(),
+    package: package(),
+    name: "KafkaMessageBus",
+    source_url: "https://github.com/jeffhsta/kafka_message_bus"
   ]
+
+  defp description do
+    """
+    Wrapper for KafkaEx for internal use
+    """
+  end
+
+  defp package do
+    [ maintainers: ["Alan Ficagna", "Jefferson Stachelski"],
+      licenses: ["MIT"],
+      links: %{"GitHub" => "https://github.com/jeffhsta/kafka_message_bus"}
+    ]
+  end
 
   def application do
     [applications: [:logger, :kafka_ex],
