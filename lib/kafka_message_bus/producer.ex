@@ -2,8 +2,10 @@ defmodule KafkaMessageBus.Producer do
   require Logger
   alias KafkaEx.Protocol.Produce.{Message, Request}
 
-  def produce(data, key, source \\ "user_service") do
-    topic = Application.get_env(:user_service, :kafka_topic)
+  def produce(data, key, opts \\ []) do
+    topic = opts |> Keyword.get(:topic, Application.get_env(:kafka_topic, :default_topic))
+    partition = opts |> Keyword.get(:partition, take_randon_partition(topic))
+    source = opts |> Keyword.get(:source, Application.get_env(:kafka_topic, :source))
 
     value = Poison.encode!(%{
       source: source,
@@ -15,7 +17,7 @@ defmodule KafkaMessageBus.Producer do
     message = %Message{key: key, value: value}
 
     produce_request = %Request{
-      partition: topic |> take_randon_partition,
+      partition: partition,
       topic: topic,
       messages: [message]
     }

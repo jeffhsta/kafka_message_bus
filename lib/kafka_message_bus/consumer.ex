@@ -28,7 +28,7 @@ defmodule KafkaMessageBus.Consumer do
       try do
         message |> dispatch(state.message_processor)
       rescue
-        error -> Logger.error("Error in process message, #{inspect error}")
+        error -> Logger.error("Error in process message #{state.topic}/#{state.partition}, #{inspect error}")
       end
     end
     {:noreply, state}
