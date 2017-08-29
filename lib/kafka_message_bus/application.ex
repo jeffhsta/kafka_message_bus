@@ -2,9 +2,10 @@ defmodule KafkaMessageBus.Application do
   require Logger
   use Application
 
+  alias KafkaMessageBus.Config
+
   def start(_type, _args) do
-    children = :kafka_message_bus
-      |> Application.get_env(:consumers)
+    children = Config.consumers
       |> Enum.map(&setup_consumer_partitions/1)
       |> List.flatten
 
@@ -19,8 +20,8 @@ defmodule KafkaMessageBus.Application do
     topic_config
     |> KafkaMessageBus.Manage.setup_consumer
     |> case do
-      {:error, error} ->
-        Logger.error(error)
+      {:warn, warn} ->
+        Logger.warn(warn)
         []
 
       {:ok, consumable_partitions} ->

@@ -1,5 +1,5 @@
 defmodule KafkaMessageBus.Manage do
-  alias KafkaEx.Protocol.Produce.{Message, Request}
+  alias KafkaMessageBus.Config
   require Logger
 
   def metadata(topic), do: KafkaEx.metadata(topic: topic)
@@ -13,11 +13,11 @@ defmodule KafkaMessageBus.Manage do
     |> fn {_topic, num_partitions} -> num_partitions end.()
   end
 
-  def setup_consumer({topic, message_processor}) do
+  def setup_consumer({topic, _message_processor}) do
     available_partitions = topic |> identify_partitions
 
-    consume_partition = Application.get_env(:kafka_message_bus, :consumers_per_topic)
-    instance_index = Application.get_env(:kafka_message_bus, :instance_index)
+    consume_partition = Config.consumers_per_topic
+    instance_index = Config.instance_index
     start_partition = (instance_index - 1) * consume_partition
     end_partition = (instance_index * consume_partition) - 1
 
@@ -27,7 +27,7 @@ defmodule KafkaMessageBus.Manage do
       end
 
     case start_partition > end_partition do
-      true -> {:error, "There is no free partition to connect"}
+      true -> {:warn, "There is no free partition to connect"}
       false -> {:ok, start_partition..end_partition}
     end
   end

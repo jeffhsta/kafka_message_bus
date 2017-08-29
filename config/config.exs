@@ -1,22 +1,10 @@
 use Mix.Config
 
-instance_index = fn ->
-  "HOSTNAME"
-  |> System.get_env
-  |> case do
-    nil -> 1
-    value ->
-      try do
-         value |> String.split("-") |> List.last |> String.to_integer
-      rescue
-        _ -> 1
-      end
-  end
-end
-
 config :kafka_message_bus,
+  default_topic: "example",
+  source: "example_service",
   consumers_per_topic: 5,
-  instance_index: instance_index.(),
+  instance_index: 1,
   consumers: [
     {"example", KafkaMessageBus.MessageProcessor.Example}
   ]
