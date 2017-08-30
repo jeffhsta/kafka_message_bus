@@ -27,7 +27,7 @@ defmodule KafkaMessageBus.Producer do
   end
 
   defp take_randon_partition(topic) do
-    {_, partitions} = KafkaMessageBus.Manage.identify_partitions(topic)
+    partitions = KafkaMessageBus.Manage.identify_partitions(topic)
     0..(partitions - 1) |> Enum.take_random(1) |> List.first
   end
 end
