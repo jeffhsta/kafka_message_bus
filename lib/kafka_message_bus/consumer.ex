@@ -26,12 +26,12 @@ defmodule KafkaMessageBus.Consumer do
   end
 
   def handle_info(:listen, state) do
-    for message <- state.stream do
-      try do
+    try do
+      for message <- state.stream do
         message |> dispatch(state.message_processor)
-      rescue
-        error -> Logger.error("Error in process message #{state.topic}/#{state.partition}, #{inspect error}")
       end
+    rescue
+      error -> Logger.error("Error in process message #{state.topic}/#{state.partition}, #{inspect error}")
     end
     {:noreply, state}
   end
