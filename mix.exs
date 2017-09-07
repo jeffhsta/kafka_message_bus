@@ -34,7 +34,7 @@ defmodule KafkaMessageBus.Mixfile do
   end
 
   defp deps, do: [
-    {:kafka_ex, "~> 0.7"},
+    {:kafka_ex, "~> 0.7.0"},
     {:poison, "~> 2.0"},
     {:ex_doc, ">= 0.0.0", only: :dev},
     {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
