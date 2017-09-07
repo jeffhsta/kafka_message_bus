@@ -2,6 +2,8 @@ defmodule KafkaMessageBus.Consumer do
   use GenServer
   require Logger
 
+  @one_minute_delay 1000 * 60
+
   alias KafkaEx.Protocol.Fetch.Message
 
   def start_link(topic, partition, message_processor), do:
@@ -12,7 +14,7 @@ defmodule KafkaMessageBus.Consumer do
       ])
 
   def init([topic: topic, partition: partition, message_processor: message_processor]) do
-    Process.send(self(), :listen, [])
+    Process.send_after(self(), :listen, @one_minute_delay)
     kafka_worker(topic, partition)
 
     {:ok, %{
