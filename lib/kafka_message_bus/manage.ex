@@ -7,6 +7,6 @@ defmodule KafkaMessageBus.Manage do
     |> Map.get(:topic_metadatas)
     |> Enum.map(fn x -> {x.topic, Enum.count(x.partition_metadatas)} end)
     |> List.first
-    |> fn {_topic, num_partitions} -> num_partitions end.()
+    |> elem(1)
   end
 end

@@ -8,22 +8,20 @@ defmodule KafkaMessageBus.Producer do
     partition = opts |> Keyword.get(:partition, take_randon_partition(topic))
     source = opts |> Keyword.get(:source, Config.source)
 
-    value = Poison.encode!(%{
+    value = %{
       source: source,
       timestamp: DateTime.utc_now,
       request_id: Logger.metadata |> Keyword.get(:request_id),
       data: data |> Map.delete(:__meta__)
-    })
+    }
+    |> Poison.encode!
 
-    message = %Message{key: key, value: value}
-
-    produce_request = %Request{
+    %Request{
       partition: partition,
       topic: topic,
-      messages: [message]
+      messages: [%Message{key: key, value: value}]
     }
-
-    KafkaEx.produce(produce_request)
+    |> KafkaEx.produce
   end
 
   defp take_randon_partition(topic) do
