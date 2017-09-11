@@ -2,29 +2,30 @@ defmodule KafkaMessageBus.Config do
 
   @lib_name :kafka_message_bus
 
-  def instance_index, do:
-    Application.get_env(@lib_name, :instance_index, default_instance_index())
-
-  def consumers_per_topic, do:
-    Application.get_env(@lib_name, :consumers_per_topic, 5)
-
-  def consumers, do:
-    Application.get_env(@lib_name, :consumers, [])
-
   def default_topic, do:
     Application.get_env(@lib_name, :default_topic)
 
   def source, do:
     Application.get_env(@lib_name, :source)
 
-  defp default_instance_index do
-    ~r/^.*-(\d+)$/
-    |> Regex.run("#{System.get_env("HOSTNAME")}")
-    |> case do
-      nil -> ["1"]
-      list -> list
-    end
-    |> List.last
-    |> String.to_integer
+  def topic_names do
+    @lib_name
+    |> Application.get_env(:consumers, [])
+    |> Enum.map(&elem(&1, 0))
+  end
+
+  def get_message_processor(topic) do
+    @lib_name
+    |> Application.get_env(:consumers, [])
+    |> Enum.filter(fn {t, _} -> t == topic end)
+    |> List.first
+    |> elem(1)
+  end
+
+  def consumer_group_opts do
+    [
+      heartbeat_interval: Application.get_env(@lib_name, :heartbeat_interval, 1_000),
+      commit_interval: Application.get_env(@lib_name, :commit_interval, 1_000)
+    ]
   end
 end

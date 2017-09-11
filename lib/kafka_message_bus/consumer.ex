@@ -1,66 +1,28 @@
 defmodule KafkaMessageBus.Consumer do
-  use GenServer
+  use KafkaEx.GenConsumer
+  alias KafkaEx.Protocol.Fetch.Message
+  alias KafkaMessageBus.Config
   require Logger
 
-  @one_minute_delay 1000 * 60
-
-  alias KafkaEx.Protocol.Fetch.Message
-
-  def start_link(topic, partition, message_processor), do:
-    GenServer.start_link(__MODULE__, [
-        topic: topic,
-        partition: partition,
-        message_processor: message_processor
-      ])
-
-  def init([topic: topic, partition: partition, message_processor: message_processor]) do
-    Process.send_after(self(), :listen, @one_minute_delay)
-    kafka_worker(topic, partition)
+  def init(topic, partition) do
+    Logger.debug("Initialize worker for #{topic}/#{partition}")
 
     {:ok, %{
-      stream: open_stream(topic, partition),
       topic: topic,
       partition: partition,
-      message_processor: message_processor
+      message_processor: Config.get_message_processor(topic)
     }}
   end
 
-  def handle_info(:listen, state) do
-    try do
-      for message <- state.stream do
-        message |> dispatch(state.message_processor)
-      end
-    rescue
-      error -> Logger.error("Error in process message #{state.topic}/#{state.partition}, #{inspect error}")
-    end
-    {:noreply, state}
-  end
+  def handle_message_set(message_set, state) do
+    for %Message{key: key, value: value} <- message_set do
+      Logger.debug "Got message: KEY: #{key}, VALUE: #{value}"
 
-  defp dispatch(%Message{key: key, value: value}, message_processor) do
-    value
-    |> Poison.decode!
-    |> fn data ->
-      Logger.metadata(request_id: data["request_id"])
-      Logger.debug(fn -> "Got message KEY: #{key}, VALUE: #{value}" end)
-      data
-    end.()
-    |> message_processor.process(key)
-  end
-
-  defp kafka_worker(topic, partition) do
-    worker_name = "kafka_connection_#{topic}_#{partition}" |> String.to_atom
-    worker_name
-    |> GenServer.whereis
-    |> case do
-      nil -> {:ok, _} = KafkaEx.create_worker(worker_name)
-      _ -> :ok
+      value
+      |> Poison.decode!
+      |> state.message_processor.process(key)
     end
 
-    worker_name
-  end
-
-  defp open_stream(topic, partition) do
-    kafka_worker = kafka_worker(topic, partition)
-    KafkaEx.stream(topic, partition, worker_name: kafka_worker)
+    {:async_commit, state}
   end
 end

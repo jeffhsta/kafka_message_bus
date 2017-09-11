@@ -3,8 +3,8 @@ use Mix.Config
 config :kafka_message_bus,
   default_topic: "example",
   source: "example_service",
-  consumers_per_topic: 5,
-  instance_index: 1,
+  heartbeat_interval: 1_000,
+  commit_interval: 1_000,
   consumers: [
     {"example", KafkaMessageBus.MessageProcessor.Example}
   ]
@@ -18,5 +18,8 @@ config :kafka_ex,
   sync_timeout: 3000,
   max_restarts: 10,
   max_seconds: 60,
-  use_ssl: false,
-  kafka_version: "0.9.0"
+  use_ssl: false
+
+config :logger,
+  backends: [:console],
+  level: :debug
