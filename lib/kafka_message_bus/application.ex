@@ -6,7 +6,7 @@ defmodule KafkaMessageBus.Application do
   def start(_type, _args) do
     import Supervisor.Spec
 
-    children = [
+    [
       supervisor(KafkaEx.ConsumerGroup, [
         KafkaMessageBus.Consumer,
         Config.source,
