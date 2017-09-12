@@ -3,7 +3,7 @@ defmodule KafkaMessageBus.Producer do
   alias KafkaEx.Protocol.Produce.{Message, Request}
   alias KafkaMessageBus.Config
 
-  @partitioner Application.get_env(:kafka_message_bus, :partitioner, KafkaMessageBus.Partitioner.Hashed)
+  @partitioner Application.get_env(:kafka_message_bus, :partitioner, KafkaMessageBus.Partitioner.Random)
 
   def produce(data, key, opts \\ []) do
     topic = opts |> Keyword.get(:topic, Config.default_topic)
