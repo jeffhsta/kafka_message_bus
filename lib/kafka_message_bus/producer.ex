@@ -3,9 +3,11 @@ defmodule KafkaMessageBus.Producer do
   alias KafkaEx.Protocol.Produce.{Message, Request}
   alias KafkaMessageBus.Config
 
+  @partitioner Application.get_env(:kafka_message_bus, :partitioner, KafkaMessageBus.Partitioner.Random)
+
   def produce(data, key, opts \\ []) do
     topic = opts |> Keyword.get(:topic, Config.default_topic)
-    partition = opts |> Keyword.get(:partition, take_randon_partition(topic))
+    partition = opts |> Keyword.get(:partition, @partitioner.assign_partition)
     source = opts |> Keyword.get(:source, Config.source)
 
     value = %{
@@ -22,10 +24,5 @@ defmodule KafkaMessageBus.Producer do
       messages: [%Message{key: key, value: value}]
     }
     |> KafkaEx.produce
-  end
-
-  defp take_randon_partition(topic) do
-    partitions = KafkaMessageBus.Manage.identify_partitions(topic)
-    0..(partitions - 1) |> Enum.take_random(1) |> List.first
   end
 end
