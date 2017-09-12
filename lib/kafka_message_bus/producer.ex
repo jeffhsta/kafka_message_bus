@@ -7,7 +7,7 @@ defmodule KafkaMessageBus.Producer do
 
   def produce(data, key, opts \\ []) do
     topic = opts |> Keyword.get(:topic, Config.default_topic)
-    partition = opts |> Keyword.get(:partition, @partitioner.assign_partition)
+    partition = opts |> Keyword.get(:partition, @partitioner.assign_partition(key))
     source = opts |> Keyword.get(:source, Config.source)
 
     value = %{
