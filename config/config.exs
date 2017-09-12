@@ -5,6 +5,7 @@ config :kafka_message_bus,
   source: "example_service",
   heartbeat_interval: 1_000,
   commit_interval: 1_000,
+  partitioner: KafkaMessageBus.Partitioner.Random,
   consumers: [
     {"example", KafkaMessageBus.MessageProcessor.Example}
   ]

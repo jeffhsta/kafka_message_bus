@@ -8,6 +8,9 @@ defmodule KafkaMessageBus.Config do
   def source, do:
     Application.get_env(@lib_name, :source)
 
+  def partitioner, do:
+    Application.get_env(@lib_name, :partitioner)
+
   def topic_names do
     @lib_name
     |> Application.get_env(:consumers, [])
