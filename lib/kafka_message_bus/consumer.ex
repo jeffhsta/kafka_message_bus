@@ -19,7 +19,11 @@ defmodule KafkaMessageBus.Consumer do
       Logger.debug "Got message: KEY: #{key}, VALUE: #{value}"
 
       value
-      |> Poison.decode!
+      |> Poison.decode
+      |> case do
+        {:ok, decoded_value} -> decoded_value
+        _ -> value
+      end
       |> state.message_processor.process(key)
     end
 
