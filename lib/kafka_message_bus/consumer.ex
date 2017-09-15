@@ -17,4 +17,20 @@ defmodule KafkaMessageBus.MessageProcessor do
     end
     :ok
   end
+
+  def process_message(message) do
+    @topics_and_processors
+    |> Enum.map(fn config -> execute_message(message, config) end)
+  end
+
+  def execute_message(message = %{topic: topic}, {topic, message_processor}) do
+    message.value
+    |> Poison.decode!
+    |> message_processor.process(message.key)
+    :ok
+  end
+
+  def execute_message(_, _) do
+    :ok
+  end
 end
