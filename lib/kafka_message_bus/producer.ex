@@ -1,12 +1,10 @@
 defmodule KafkaMessageBus.Producer do
   require Logger
-  alias KafkaEx.Protocol.Produce.{Message, Request}
+  alias Kaffe.Producer
   alias KafkaMessageBus.Config
 
   def produce(data, key, opts \\ []) do
     topic = opts |> Keyword.get(:topic, Config.default_topic)
-    partitions = KafkaMessageBus.Manage.identify_partitions(topic)
-    partition = opts |> Keyword.get(:partition, Config.partitioner.assign_partition(key, partitions))
     source = opts |> Keyword.get(:source, Config.source)
 
     value = %{
@@ -17,11 +15,6 @@ defmodule KafkaMessageBus.Producer do
     }
     |> Poison.encode!
 
-    %Request{
-      partition: partition,
-      topic: topic,
-      messages: [%Message{key: key, value: value}]
-    }
-    |> KafkaEx.produce
+    Producer.produce_sync(topic, [{key, value}])
   end
 end

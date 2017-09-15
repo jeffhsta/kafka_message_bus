@@ -16,7 +16,7 @@ defmodule KafkaMessageBus.Mixfile do
 
   defp description do
     """
-    Wrapper for KafkaEx for internal use
+    Wrapper for Kaffe for internal use
     """
   end
 
@@ -28,7 +28,7 @@ defmodule KafkaMessageBus.Mixfile do
   end
 
   def application do
-    [applications: [:logger, :kafka_ex],
+    [applications: [:logger, :kaffe],
      mod: {KafkaMessageBus.Application, []}
     ]
   end

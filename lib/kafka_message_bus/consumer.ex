@@ -1,8 +1,11 @@
 defmodule KafkaMessageBus.MessageProcessor do
+  require Logger
+  alias KafkaMessageBus.Config
+
   def handle_messages(messages) do
-    for message = {key: key, value: value} <- messages do
-      message_processor = Config.get_message_processor(message.topic)
-      Logger.debug "Got message: KEY: #{key}, VALUE: #{value}"
+    for %{key: key, value: value, topic: topic, partition: partition} <- messages do
+      message_processor = Config.get_message_processor(topic)
+      Logger.debug fn -> "Got message: #{topic}/#{partition} - #{key}, #{value}" end
 
       value
       |> Poison.decode

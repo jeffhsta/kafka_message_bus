@@ -16,17 +16,19 @@ config :kaffe,
     topics: ["kafka_message_bus"],
     consumer_group: "kafka_message_bus",
     message_handler: KafkaMessageBus.MessageProcessor,
-    async_message_ack: true,
+    async_message_ack: false,
     offset_commit_interval_seconds: 10,
-    start_with_earliest_message: true,
+    start_with_earliest_message: false,
     rebalance_delay_ms: 100,
     max_bytes: 10_000,
-    subscriber_retries: 1,
+    subscriber_retries: 5,
     subscriber_retry_delay_ms: 5,
+    worker_allocation_strategy: :worker_per_topic_partition
     ],
   producer: [
+    partition_strategy: :md5,
     endpoints: [kafka: 9092],
-    topics: ["kaffe-test"]
+    topics: ["kafka_message_bus"]
   ],
   kafka_mod: :brod
 
