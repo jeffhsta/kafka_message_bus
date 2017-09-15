@@ -9,4 +9,10 @@ defmodule KafkaMessageBus.Application do
       name: KafkaMessageBus.Supervisor
     )
   end
+
+  def topic_list do
+    Application.get_env(:kafka_message_bus, :consumers)
+    |> Enum.map(fn({topic, processor}) -> topic end)
+    |> Enum.reduce([], fn(topic, acc) -> acc ++ [topic] end)
+  end
 end
