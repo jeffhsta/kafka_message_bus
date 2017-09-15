@@ -6,13 +6,7 @@ defmodule KafkaMessageBus.Application do
   def start(_type, _args) do
     import Supervisor.Spec
 
-    [
-      supervisor(KafkaEx.ConsumerGroup, [
-        KafkaMessageBus.Consumer,
-        Config.source,
-        Config.topic_names,
-        Config.consumer_group_opts
-    ])]
+    [supervisor(Kaffe.Consumer, [])]
     |> Supervisor.start_link(
       strategy: :one_for_one,
       name: KafkaMessageBus.Supervisor
