@@ -1,6 +1,7 @@
 defmodule KafkaMessageBus.Consumer do
   require Logger
-  @topics_resources_and_processors Application.get_env(:kafka_message_bus, :consumers)
+  @processor_config Application.get_env(:kafka_message_bus, :consumers)
+  @retry_strategy Application.get_env(:kafka_message_bus, :retry_strategy)
 
   def handle_messages(messages) do
     Logger.debug fn -> "Got #{Enum.count(messages)} messages" end
@@ -17,7 +18,7 @@ defmodule KafkaMessageBus.Consumer do
     Logger.metadata(request_id: value["request_id"])
     Logger.debug fn -> "Got message: #{message.topic}/#{message.partition} -> #{message.key}: #{inspect value}" end
 
-    @topics_resources_and_processors
+    @processor_config
     |> Enum.each(&execute_message(message, value, &1))
   end
 
@@ -33,8 +34,14 @@ defmodule KafkaMessageBus.Consumer do
     end
   end
 
-  def enqueue_message_retry(data, message_processor) do
+  def enqueue_message_retry(data, message_processor) when @retry_strategy == :exq do
     Exq.enqueue(Exq, "consume_queue", KafkaMessageBus.Consumer, [data, message_processor])
+  end
+
+  def enqueue_message_retry(data, message_processor) do
+    Logger.warn(fn ->
+      "Will not retry message with key: #{data.key} and value: #{data.value}"
+    end)
   end
 
   #this is the function that is run by Exq when retrying the message processing
