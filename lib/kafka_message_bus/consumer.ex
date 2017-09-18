@@ -17,7 +17,11 @@ defmodule KafkaMessageBus.MessageProcessor do
 
   def execute_message(message = %{topic: topic}, {topic, message_processor}) do
     message.value
-    |> Poison.decode!
+    |> Poison.decode()
+    |> case do
+      {:ok, value} -> value
+      {:error, _} -> message.value
+    end
     |> message_processor.process(message.key)
     :ok
   end
