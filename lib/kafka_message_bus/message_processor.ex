@@ -3,5 +3,5 @@ defmodule KafkaMessageBus.MessageProcessor.Behaviour do
   @type key :: String.t
   @type action :: String.t
 
-  @callback process(data, key, action)
+  @callback process(data, key, action) :: :ok
 end
