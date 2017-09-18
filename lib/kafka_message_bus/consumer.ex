@@ -1,32 +1,32 @@
-defmodule KafkaMessageBus.Consumer do
-  use KafkaEx.GenConsumer
-  alias KafkaEx.Protocol.Fetch.Message
-  alias KafkaMessageBus.Config
+defmodule KafkaMessageBus.MessageProcessor do
   require Logger
+  @topics_and_processors Application.get_env(:kafka_message_bus, :consumers)
 
-  def init(topic, partition) do
-    Logger.debug("Initialize worker for #{topic}/#{partition}")
-
-    {:ok, %{
-      topic: topic,
-      partition: partition,
-      message_processor: Config.get_message_processor(topic)
-    }}
+  def handle_messages(messages) do
+    for message = %{key: key, value: value, topic: topic, partition: partition} <- messages do
+      Logger.debug fn -> "Got message: #{topic}/#{partition} - #{key}, #{value}" end
+      process_message(message)
+    end
+    :ok
   end
 
-  def handle_message_set(message_set, state) do
-    for %Message{key: key, value: value} <- message_set do
-      Logger.debug "Got message: KEY: #{key}, VALUE: #{value}"
+  def process_message(message) do
+    @topics_and_processors
+    |> Enum.map(fn config -> execute_message(message, config) end)
+  end
 
-      value
-      |> Poison.decode
-      |> case do
-        {:ok, decoded_value} -> decoded_value
-        _ -> value
-      end
-      |> state.message_processor.process(key)
+  def execute_message(message = %{topic: topic}, {topic, message_processor}) do
+    message.value
+    |> Poison.decode()
+    |> case do
+      {:ok, value} -> value
+      {:error, _} -> message.value
     end
+    |> message_processor.process(message.key)
+    :ok
+  end
 
-    {:async_commit, state}
+  def execute_message(_, _) do
+    :ok
   end
 end

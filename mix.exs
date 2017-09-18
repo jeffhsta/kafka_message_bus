@@ -3,7 +3,7 @@ defmodule KafkaMessageBus.Mixfile do
 
   def project, do: [
     app: :kafka_message_bus,
-    version: "0.2.1",
+    version: "0.3.0",
     elixir: "~> 1.4",
     build_embedded: Mix.env == :prod,
     start_permanent: Mix.env == :prod,
@@ -16,7 +16,7 @@ defmodule KafkaMessageBus.Mixfile do
 
   defp description do
     """
-    Wrapper for KafkaEx for internal use
+    Wrapper for Kaffe for internal use
     """
   end
 
@@ -28,13 +28,13 @@ defmodule KafkaMessageBus.Mixfile do
   end
 
   def application do
-    [applications: [:logger, :kafka_ex],
+    [applications: [:logger, :kaffe],
      mod: {KafkaMessageBus.Application, []}
     ]
   end
 
   defp deps, do: [
-    {:kafka_ex, "~> 0.8.0"},
+    {:kaffe, "~> 1.0"},
     {:poison, "~> 2.0"},
     {:ex_doc, ">= 0.0.0", only: :dev},
     {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
