@@ -1,4 +1,4 @@
 defmodule KafkaMessageBus do
-  def produce(data, key, opts \\ []), do:
-    KafkaMessageBus.Producer.produce(data, key, opts)
+  def produce(data, key, action, opts \\ []), do:
+    KafkaMessageBus.Producer.produce(data, key, action, opts)
 end
