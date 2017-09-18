@@ -25,7 +25,7 @@ defmodule KafkaMessageBus.Consumer do
     Logger.debug(fn ->
       "Got message: #{message.topic}/#{message.partition} -> #{message.key}: #{data}"
     end)
-    message_processor.process(data, message.key)
+    message_processor.process(data)
   end
 
   defp execute_message(_, _), do: :ok
