@@ -6,3 +6,9 @@ defmodule KafkaMessageBus.MessageProcessor.Behaviour do
 
   @callback process(data, key, action, resource) :: :ok
 end
+
+defmodule KafkaMessageBus.MessageProcessor do
+  def process(value, key) do
+    IO.puts "Attempt with key: #{inspect key} and value: #{inspect value}"
+  end
+end

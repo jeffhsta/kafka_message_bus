@@ -28,13 +28,14 @@ defmodule KafkaMessageBus.Mixfile do
   end
 
   def application do
-    [applications: [:logger, :kaffe],
+    [applications: [:logger, :kaffe, :exq],
      mod: {KafkaMessageBus.Application, []}
     ]
   end
 
   defp deps, do: [
     {:kaffe, "~> 1.0"},
+    {:exq, "~> 0.9.0"},
     {:poison, "~> 2.0"},
     {:ex_doc, ">= 0.0.0", only: :dev},
     {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
