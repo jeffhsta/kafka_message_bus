@@ -3,30 +3,36 @@ defmodule KafkaMessageBus.Consumer do
   @topics_and_processors Application.get_env(:kafka_message_bus, :consumers)
 
   def handle_messages(messages) do
-    for message = %{key: key, value: value, topic: topic, partition: partition} <- messages do
-      Logger.debug fn -> "Got message: #{topic}/#{partition} - #{key}, #{value}" end
+    Logger.debug fn -> "Got #{Enum.count(messages)} messages" end
+
+    for message <- messages do
       process_message(message)
     end
     :ok
   end
 
-  def process_message(message) do
+  defp process_message(message) do
     @topics_and_processors
-    |> Enum.map(fn config -> execute_message(message, config) end)
+    |> Enum.each(&execute_message(message, &1))
   end
 
-  def execute_message(message = %{topic: topic}, {topic, message_processor}) do
-    message.value
-    |> Poison.decode()
-    |> case do
-      {:ok, value} -> value
-      {:error, _} -> message.value
-    end
-    |> message_processor.process(message.key)
-    :ok
+  defp execute_message(message = %{topic: topic}, {topic, message_processor}) do
+    data =
+      message.value
+      |> Poison.decode()
+      |> handle_decode_value(message.value)
+
+    Logger.debug(fn ->
+      "Got message: #{message.topic}/#{message.partition} -> #{message.key}: #{data}"
+    end)
+    message_processor.process(data, message.key)
   end
 
-  def execute_message(_, _) do
-    :ok
+  defp execute_message(_, _), do: :ok
+
+  defp handle_decode_value({:error, _}, raw_value), do: raw_value
+  defp handle_decode_value({:ok, decoded_value}, _) do
+    Logger.metadata(request_id: decoded_value["request_id"])
+    decoded_value
   end
 end
