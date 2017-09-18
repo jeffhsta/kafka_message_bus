@@ -1,4 +1,4 @@
-defmodule KafkaMessageBus.MessageProcessor do
+defmodule KafkaMessageBus.Consumer do
   require Logger
   @topics_and_processors Application.get_env(:kafka_message_bus, :consumers)
 

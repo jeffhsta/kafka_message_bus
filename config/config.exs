@@ -7,7 +7,7 @@ config :kafka_message_bus,
   commit_interval: 1_000,
   partitioner: KafkaMessageBus.Partitioner.Random,
   consumers: [
-    {"example", KafkaMessageBus.MessageProcessor}
+    {"example", KafkaMessageBus.Consumer}
   ]
 
 config :kaffe,
@@ -15,7 +15,7 @@ config :kaffe,
     endpoints: [localhost: 9092],
     topics: ["kafka_message_bus"],
     consumer_group: "kafka_message_bus",
-    message_handler: KafkaMessageBus.MessageProcessor,
+    message_handler: KafkaMessageBus.Consumer,
     async_message_ack: false,
     offset_commit_interval_seconds: 10,
     start_with_earliest_message: false,
