@@ -3,12 +3,13 @@ defmodule KafkaMessageBus.Producer do
   alias Kaffe.Producer
   alias KafkaMessageBus.Config
 
-  def produce(data, key, opts \\ []) do
+  def produce(data, key, action, opts \\ []) do
     topic = opts |> Keyword.get(:topic, Config.default_topic)
     source = opts |> Keyword.get(:source, Config.source)
 
     value = %{
       source: source,
+      action: action,
       timestamp: DateTime.utc_now,
       request_id: Logger.metadata |> Keyword.get(:request_id),
       data: data |> Map.delete(:__meta__)
