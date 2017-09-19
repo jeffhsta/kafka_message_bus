@@ -15,14 +15,14 @@ defmodule KafkaMessageBus.Consumer do
 
   defp process_message({:ok, value}, message) do
     Logger.metadata(request_id: value["request_id"])
-    Logger.debug fn -> "Got message: #{message.topic}/#{message.partition} -> #{message.key}: #{value}" end
+    Logger.debug fn -> "Got message: #{message.topic}/#{message.partition} -> #{message.key}: #{inspect value}" end
 
     @topics_resources_and_processors
     |> Enum.each(&execute_message(message, value, &1))
   end
 
-  defp process_message({:error, raw}, %{topic: topic}) do
-    Logger.error("Failed to parse message #{raw} in topic: #{topic}")
+  defp process_message({:error, _}, %{topic: topic, value: value}) do
+    Logger.error("Failed to parse message #{value} in topic: #{inspect topic}")
   end
 
   defp execute_message(%{topic: topic}, data = %{resource: resource}, {topic, resource, processor}) do
