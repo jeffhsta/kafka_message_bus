@@ -1,14 +1,14 @@
 defmodule KafkaMessageBus.ConsumerEnqueuer do
   require Logger
 
-  def enqueue(value, key, message_processor) do
-    Exq.enqueue(Exq, "dead_letter_queue", KafkaMessageBus.ConsumerEnqueuer, [value, key, message_processor])
+  def enqueue(data, message_processor) do
+    Exq.enqueue(Exq, "dead_letter_queue", KafkaMessageBus.ConsumerEnqueuer, [data, message_processor])
   end
 
-  def perform(value, key, message_processor) do
+  def perform(data, message_processor) do
     Logger.warn(fn ->
-      "Retrying message with key: #{key} and value: #{value}"
+      "Retrying message with key: #{data.key} and value: #{data.value}"
     end)
-    message_processor.process(value, key)
+    message_processor.process(data)
   end
 end

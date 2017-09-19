@@ -35,7 +35,7 @@ defmodule KafkaMessageBus.Consumer do
   end
 
   def enqueue_message_retry(data, message_processor) when @retry_strategy == :exq do
-    Exq.enqueue(Exq, "dead_letter_queue", KafkaMessageBus.ConsumerEnqueuer, [data, message_processor])
+    KafkaMessageBus.ConsumerEnqueuer.enqueue(data, message_processor)
   end
 
   def enqueue_message_retry(data, message_processor) do
