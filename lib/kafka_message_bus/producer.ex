@@ -3,7 +3,7 @@ defmodule KafkaMessageBus.Producer do
   alias Kaffe.Producer
   alias KafkaMessageBus.Config
 
-  def produce(data, key, action, resource, opts \\ []) do
+  def produce(data, key, resource, action, opts \\ []) do
     topic = opts |> Keyword.get(:topic, Config.default_topic)
     source = opts |> Keyword.get(:source, Config.source)
 
