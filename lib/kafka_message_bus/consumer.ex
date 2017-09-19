@@ -28,6 +28,6 @@ defmodule KafkaMessageBus.Consumer do
   defp execute_message(%{topic: topic}, data = %{resource: resource}, {topic, resource, processor}) do
     processor.process(data)
   end
-  
+
   defp execute_message(_, _, _), do: :ok
 end
