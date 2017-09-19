@@ -9,7 +9,6 @@ end
 
 defmodule KafkaMessageBus.MessageProcessor do
   def process(data) do
-    IO.puts "Attempt with key: #{data.key} and value: #{data.value}"
-    throw "test"
+    IO.puts "Processed message with data: #{inspect data}"
   end
 end
