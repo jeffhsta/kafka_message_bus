@@ -7,7 +7,7 @@ config :kafka_message_bus,
   commit_interval: 1_000,
   partitioner: KafkaMessageBus.Partitioner.Random,
   consumers: [
-    {"user", KafkaMessageBus.MessageProcessor}
+    {"user", "login", KafkaMessageBus.MessageProcessor}
   ]
 
 config :kaffe,

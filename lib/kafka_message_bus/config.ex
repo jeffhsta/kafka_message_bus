@@ -1,5 +1,4 @@
 defmodule KafkaMessageBus.Config do
-
   @lib_name :kafka_message_bus
 
   def default_topic, do:
