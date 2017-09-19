@@ -21,7 +21,7 @@ defmodule KafkaMessageBus.Mixfile do
   end
 
   defp package do
-    [ maintainers: ["Alan Ficagna", "Gabriel Alves", "Jefferson Stachelski"],
+    [ maintainers: ["Alan Ficagna", "Cristiano Dias", "Gabriel Alves", "Jefferson Stachelski"],
       licenses: ["MIT"],
       links: %{"GitHub" => "https://github.com/jeffhsta/kafka_message_bus"}
     ]
