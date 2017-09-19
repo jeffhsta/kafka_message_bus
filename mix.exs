@@ -28,7 +28,7 @@ defmodule KafkaMessageBus.Mixfile do
   end
 
   def application do
-    [applications: [:logger, :kaffe, :exq],
+    [applications: [:logger, :kaffe],
      mod: {KafkaMessageBus.Application, []}
     ]
   end

@@ -1,5 +1,6 @@
 defmodule KafkaMessageBus.Config do
   @lib_name :kafka_message_bus
+  @retry_strategy Application.get_env(:kafka_message_bus, :retry_strategy)
 
   def default_topic, do:
     Application.get_env(@lib_name, :default_topic)
@@ -29,5 +30,14 @@ defmodule KafkaMessageBus.Config do
       heartbeat_interval: Application.get_env(@lib_name, :heartbeat_interval, 1_000),
       commit_interval: Application.get_env(@lib_name, :commit_interval, 1_000)
     ]
+  end
+
+  def queue_supervisor() when @retry_strategy == :exq do
+    import Supervisor.Spec
+    [supervisor(Exq, [])]
+  end
+
+  def queue_supervisor() do
+    []
   end
 end
