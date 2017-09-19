@@ -35,13 +35,11 @@ defmodule KafkaMessageBus.Consumer do
   end
 
   def enqueue_message_retry(data, message_processor) when @retry_strategy == :exq do
-    Exq.enqueue(Exq, "consume_queue", KafkaMessageBus.Consumer, [data, message_processor])
+    Exq.enqueue(Exq, "dead_letter_queue", KafkaMessageBus.Consumer, [data, message_processor])
   end
 
   def enqueue_message_retry(data, message_processor) do
-    Logger.warn(fn ->
-      "Will not retry message with key: #{data.key} and value: #{data.value}"
-    end)
+    Logger.warn("Will not retry message with key: #{data.key} and value: #{data.value}")
   end
 
   #this is the function that is run by Exq when retrying the message processing
