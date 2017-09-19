@@ -25,9 +25,8 @@ defmodule KafkaMessageBus.Consumer do
     Logger.error("Failed to parse message #{value} in topic: #{inspect topic}")
   end
 
-  defp execute_message(%{topic: topic}, data = %{resource: resource}, {topic, resource, processor}) do
+  defp execute_message(%{topic: topic}, data = %{"resource" => resource}, {topic, resource, processor}), do:
     processor.process(data)
-  end
 
   defp execute_message(_, _, _), do: :ok
 end
