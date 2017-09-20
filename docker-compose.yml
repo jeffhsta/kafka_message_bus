@@ -13,3 +13,8 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
     depends_on:
       - zookeeper
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"

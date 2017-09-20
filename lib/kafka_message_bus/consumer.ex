@@ -16,34 +16,31 @@ defmodule KafkaMessageBus.Consumer do
     :ok
   end
 
-  defp process_message({:ok, data}, topic) do
-    Logger.metadata(request_id: data["request_id"])
+  defp process_message({:ok, msg_content}, topic) do
+    Logger.metadata(request_id: msg_content["request_id"])
     @processor_config
-    |> Enum.each(&execute_message(data, topic, &1))
+    |> Enum.each(&execute_message(msg_content, topic, &1))
   end
 
-  defp process_message({:error, error}, topic) do
+  defp process_message({:error, error}, topic), do:
     Logger.error("Failed to parse message in topic #{topic}. Error: #{inspect error}")
-  end
 
-  defp execute_message(data = %{"resource" => resource}, topic, {topic, resource, message_processor}) do
+  defp execute_message(msg_content = %{"resource" => resource}, topic, {topic, resource, message_processor}) do
     try do
-      message_processor.process(data)
-    catch
-      _ -> enqueue_message_retry(data, message_processor)
+      message_processor.process(msg_content)
+    rescue
+      _ -> enqueue_message_retry(msg_content, message_processor, @retry_strategy)
     end
   end
 
-  defp execute_message(data, _, _) do
-    Logger.debug fn -> "Ignoring message with data: #{inspect data}" end
-    :ok
+  defp execute_message(msg_content, _, _), do:
+    Logger.debug fn -> "Ignoring message with no resource: #{inspect msg_content}" end
+
+  defp enqueue_message_retry(msg_content, message_processor, retry_strategy) when retry_strategy == :exq do
+    KafkaMessageBus.ConsumerEnqueuer.enqueue(msg_content, message_processor)
   end
 
-  def enqueue_message_retry(data, message_processor) when @retry_strategy == :exq do
-    KafkaMessageBus.ConsumerEnqueuer.enqueue(data, message_processor)
-  end
+  defp enqueue_message_retry(_msg_content, _message_processor, _retry_strategy), do:
+    Logger.warn("Will not retry message")
 
-  def enqueue_message_retry(data, message_processor) do
-    Logger.warn("Will not retry message with data: #{data}")
-  end
 end

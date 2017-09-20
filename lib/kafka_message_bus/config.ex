@@ -32,12 +32,10 @@ defmodule KafkaMessageBus.Config do
     ]
   end
 
-  def queue_supervisor() when @retry_strategy == :exq do
+  def queue_supervisor when @retry_strategy == :exq do
     import Supervisor.Spec
     [supervisor(Exq, [])]
   end
 
-  def queue_supervisor() do
-    []
-  end
+  def queue_supervisor, do: []
 end

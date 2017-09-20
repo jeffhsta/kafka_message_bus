@@ -8,7 +8,8 @@ config :kafka_message_bus,
   partitioner: KafkaMessageBus.Partitioner.Random,
   consumers: [
     {"user", "login", KafkaMessageBus.MessageProcessor}
-  ]
+  ],
+  retry_strategy: :exq
 
 config :kaffe,
   consumer: [
@@ -36,16 +37,16 @@ config :logger,
   backends: [:console],
   level: :debug
 
-  config :exq,
-    name: Exq,
-    host: "127.0.0.1",
-    port: 6379,
-    namespace: "exq",
-    concurrency: :infinite,
-    start_on_application: false,
-    queues: ["dead_letter_queue"],
-    poll_timeout: 50,
-    scheduler_poll_timeout: 200,
-    scheduler_enable: true,
-    max_retries: 100,
-    shutdown_timeout: 5000
+config :exq,
+  name: Exq,
+  host: "127.0.0.1",
+  port: 6379,
+  namespace: "exq",
+  concurrency: :infinite,
+  start_on_application: false,
+  queues: ["dead_letter_queue"],
+  poll_timeout: 50,
+  scheduler_poll_timeout: 200,
+  scheduler_enable: true,
+  max_retries: 100,
+  shutdown_timeout: 5000
