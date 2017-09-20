@@ -6,3 +6,9 @@ defmodule KafkaMessageBus.MessageProcessor.Behaviour do
 
   @callback process(data, key, action, resource) :: :ok
 end
+
+defmodule KafkaMessageBus.MessageProcessor do
+  def process(data) do
+    IO.puts "Processed message with data: #{inspect data}"
+  end
+end

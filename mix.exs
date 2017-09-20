@@ -21,7 +21,7 @@ defmodule KafkaMessageBus.Mixfile do
   end
 
   defp package do
-    [ maintainers: ["Alan Ficagna", "Gabriel Alves", "Jefferson Stachelski"],
+    [ maintainers: ["Alan Ficagna", "Cristiano Dias", "Gabriel Alves", "Jefferson Stachelski"],
       licenses: ["MIT"],
       links: %{"GitHub" => "https://github.com/jeffhsta/kafka_message_bus"}
     ]
@@ -35,6 +35,7 @@ defmodule KafkaMessageBus.Mixfile do
 
   defp deps, do: [
     {:kaffe, "~> 1.0"},
+    {:exq, "~> 0.9.0"},
     {:poison, "~> 2.0"},
     {:ex_doc, ">= 0.0.0", only: :dev},
     {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
