@@ -3,7 +3,7 @@ defmodule KafkaMessageBus.Mixfile do
 
   def project, do: [
     app: :kafka_message_bus,
-    version: "2.2.0",
+    version: "2.2.1",
     elixir: "~> 1.4",
     build_embedded: Mix.env == :prod,
     start_permanent: Mix.env == :prod,
@@ -34,7 +34,7 @@ defmodule KafkaMessageBus.Mixfile do
   end
 
   defp deps, do: [
-    {:kaffe, "~> 1.0"},
+    {:kaffe, "~> 1.3.0"},
     {:exq, "~> 0.9.0"},
     {:poison, "~> 2.0"},
     {:ex_doc, ">= 0.0.0", only: :dev},
