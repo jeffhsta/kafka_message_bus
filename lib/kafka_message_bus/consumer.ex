@@ -3,6 +3,7 @@ defmodule KafkaMessageBus.Consumer do
   @processor_config Application.get_env(:kafka_message_bus, :consumers)
   @retry_strategy Application.get_env(:kafka_message_bus, :retry_strategy)
 
+  def handle_messages(nil), do: :ok
   def handle_messages(messages) do
     for message <- messages do
       Logger.debug fn ->
