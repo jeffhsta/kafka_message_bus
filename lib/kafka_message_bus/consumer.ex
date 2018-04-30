@@ -26,6 +26,7 @@ defmodule KafkaMessageBus.Consumer do
     do: Logger.error("Failed to parse message in topic #{topic}. Error: #{inspect error}")
 
   defp execute_message(msg_content = %{"resource" => resource}, topic, {topic, resource, message_processor}) do
+    Logger.debug fn -> "[ACCEPTED] #{message_processor}: #{inspect msg_content}" end
     try do
       message_processor.process(msg_content)
     rescue
@@ -33,7 +34,9 @@ defmodule KafkaMessageBus.Consumer do
     end
   end
 
-  defp execute_message(msg_content, _, _), do: :ok
+  defp execute_message(msg_content, _, {_, _, message_processor}), do:
+    Logger.debug fn -> "[IGNORED] #{message_processor}: #{inspect msg_content}" end
+    :ok
 
   defp enqueue_message_retry(msg_content, message_processor, retry_strategy)
   when retry_strategy == :exq,

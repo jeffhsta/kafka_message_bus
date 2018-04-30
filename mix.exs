@@ -3,7 +3,7 @@ defmodule KafkaMessageBus.Mixfile do
 
   def project, do: [
     app: :kafka_message_bus,
-    version: "2.2.3",
+    version: "2.2.4",
     elixir: "~> 1.4",
     build_embedded: Mix.env == :prod,
     start_permanent: Mix.env == :prod,
@@ -11,7 +11,7 @@ defmodule KafkaMessageBus.Mixfile do
     description: description(),
     package: package(),
     name: "KafkaMessageBus",
-    source_url: "https://github.com/jeffhsta/kafka_message_bus"
+    source_url: "https://github.com/heckfer/kafka_message_bus"
   ]
 
   defp description do
@@ -21,9 +21,9 @@ defmodule KafkaMessageBus.Mixfile do
   end
 
   defp package do
-    [ maintainers: ["Alan Ficagna", "Cristiano Dias", "Gabriel Alves", "Jefferson Stachelski"],
+    [ maintainers: ["Alan Ficagna", "Gabriel Alves", "Fernando Heck", "Matthias Nunes", "Eduardo Cunha"],
       licenses: ["MIT"],
-      links: %{"GitHub" => "https://github.com/jeffhsta/kafka_message_bus"}
+      links: %{"GitHub" => "https://github.com/heckfer/kafka_message_bus"}
     ]
   end
 
