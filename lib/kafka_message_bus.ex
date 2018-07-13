@@ -1,4 +1,9 @@
 defmodule KafkaMessageBus do
-  def produce(data, key, resource, action, opts \\ []), do:
-    KafkaMessageBus.Producer.produce(data, key, resource, action, opts)
+  @moduledoc false
+
+  alias KafkaMessageBus.Producer
+
+  def produce(data, key, resource, action, opts \\ []) do
+    Producer.produce(data, key, resource, action, opts)
+  end
 end
