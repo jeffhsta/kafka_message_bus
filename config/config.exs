@@ -25,7 +25,7 @@ config :kaffe,
     subscriber_retries: 5,
     subscriber_retry_delay_ms: 5,
     worker_allocation_strategy: :worker_per_topic_partition
-    ],
+  ],
   producer: [
     partition_strategy: :md5,
     endpoints: [kafka: 9092],
